@@ -1,0 +1,111 @@
+# Strato SDK 示例配置文件
+# 复制此文件为 config.yaml 并填入您的真实配置信息
+
+app:
+  name: "strato-sdk"
+  version: "1.0.0"
+  environment: "development"
+  debug: true
+
+# 日志配置
+log:
+  level: "info"                    # 日志级别：debug/info/warn/error
+  file_path: "logs/app.log"         # 日志文件路径
+  max_size: 10                      # 单个日志文件最大大小（MB）
+  max_backups: 5                    # 保留旧日志文件数量
+  max_age: 30                       # 保留旧日志天数
+  compress: true                   # 是否压缩旧日志
+  env: "production"                # 环境：development/production
+  enable_console: false             # 是否在控制台输出日志
+
+# 搜索配置
+search:
+  strategy:
+    breadth: 3
+    mixed_engines:
+      - "firecrawl"
+      - "searxng"
+    default_engine: "firecrawl"
+    default_fallback_order:
+      - "firecrawl"
+      - "searxng"
+    enable_fallback: false
+    fail_fast: true
+    max_retries: 3
+    timeout_seconds: 30
+
+  engines:
+    searxng:
+      enabled: true
+      base_url: "http://your-searxng-instance:8080/"  # 替换为您的SearXNG实例地址
+      config:
+        timeout: 30
+        format: "json"
+    firecrawl:
+      enabled: true
+      api_key: "fc-your-firecrawl-api-key-here"      # 替换为您的Firecrawl API密钥
+      base_url: "https://api.firecrawl.dev"
+      config:
+        timeout: 30
+
+# Web配置
+web:
+  # Web策略配置
+  strategy:
+    default_scraper: jina
+    default_fallback_order:
+      - jina
+      - firecrawl
+    enable_fallback: false
+    fail_fast: true
+
+  # 抓取器配置
+  scrapers:
+    jina:
+      enabled: true
+      base_url: "https://r.jina.ai"
+      api_key: "jina_your-jina-api-key-here"       # 替换为您的Jina API密钥
+    firecrawl:
+      enabled: true
+      base_url: "https://api.firecrawl.dev/v0"
+      api_key: "fc-your-firecrawl-api-key-here"    # 替换为您的Firecrawl API密钥
+
+# 模型配置
+models:
+  # 默认模型
+  default_model: "claude_sonnet"
+
+  # 模型列表
+  models:
+    # DeepSeek Chat
+    deepseek:
+      type: "deepseek"
+      enabled: true
+      api_key: "sk-your-deepseek-api-key-here"     # 替换为您的DeepSeek API密钥
+      base_url: "https://api.deepseek.com/v1"
+      model: "deepseek-chat"
+      temperature: 0.7
+      max_tokens: 8192
+      top_p: 1.0
+      timeout_seconds: 360
+    claude_sonnet:
+      type: "openai"
+      enabled: true
+      api_key: "sk-or-v1-your-openrouter-api-key-here"  # 替换为您的OpenRouter API密钥
+      base_url: "https://openrouter.ai/api/v1"
+      model: "anthropic/claude-sonnet-4"
+      temperature: 0.7
+      max_tokens: 8192
+      top_p: 1.0
+      timeout_seconds: 360
+
+# 智能代理配置
+agent:
+  # 研究代理配置
+  research:
+    max_iterations: 3        # 最大迭代次数
+    max_steps: 50           # 最大步数 (增加到50以支持更多子问题研究)
+    min_questions: 2        # 最少问题数
+    max_content_length: 35000  # 最大内容长度
+    max_single_content: 4000   # 单个内容最大长度
+    channel_buffer: 100     # 通道缓冲区大小 
